@@ -3,7 +3,7 @@
 
 - Go to project path.
 
-- Run: **`docker-compose up --build`**.
+- Run: **`docker-compose up --build -d`**.
 
 - RUN: **`docker-compose exec apache composer install`**
 
