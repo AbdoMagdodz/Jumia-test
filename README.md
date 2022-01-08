@@ -11,5 +11,5 @@
 to check the application.     
 
 ## Tests:
-- Go to run the test go to the project path.
+- Go to the project path.
 - Run :**`docker-compose exec apache php artisan test`**
