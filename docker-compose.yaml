@@ -1,0 +1,47 @@
+version: "3"
+
+services:
+  # apache-server.  
+  apache:
+    build: 
+      context: .
+      dockerfile: ./docker/apache/Dockerfile
+    image: "jumia-image"
+    container_name: jumia-apache
+    networks:
+      - jumia-network
+    volumes:
+      - ./:/var/www/html
+    ports:
+      - 8000:80
+        
+  # mysql-server.
+  mysql:
+    image: mysql:8.0.27
+    container_name: jumia-mysql
+    networks:
+      - jumia-network
+    volumes:
+      - ./docker/DB:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+
+  # phpmyadmin.
+  phpmyadmin:
+    image: phpmyadmin:5.1
+    container_name: jumia-phpmyadmin
+    depends_on:
+      - mysql
+    networks:
+      - jumia-network
+    ports:
+      - 9000:80
+    environment:
+      - PMA_HOST=${DB_HOST}
+      - PMA_PORT=${DB_PORT}  
+
+#image networks
+networks:
+  jumia-network:
