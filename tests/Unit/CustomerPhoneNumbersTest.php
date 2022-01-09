@@ -4,8 +4,6 @@ namespace Tests\Unit;
 
 use App\Models\Country;
 use App\Models\Views\CustomerPhoneView;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Tests\TestCase;
 
 class CustomerPhoneNumbersTest extends TestCase
@@ -23,16 +21,14 @@ class CustomerPhoneNumbersTest extends TestCase
     {
         $phones = CustomerPhoneView::paginate(10);
 
-        $response = [
+        $expectedResponse = [
             'body' => view('partials.phone_numbers_table', [
                 'numbers' => $phones->getCollection()
             ])->render(),
             'last_page' => $phones->lastPage(),
         ];
 
-        $this->get(route('ajax_list_phones'))
-            ->assertStatus(200)
-            ->assertExactJson($response);
+        $this->assertResponse($expectedResponse);
     }
 
     public function testFetchingNumbersWithCountryCodeParam()
@@ -41,11 +37,20 @@ class CustomerPhoneNumbersTest extends TestCase
         $params = [
             'phone_country_code' => $countryCode
         ];
-        $res = $this->getPhonesResponse($params);
+        $expectedResponse = $this->getPhonesResponse($params);
         $params = http_build_query($params);
-        $this->get(route('ajax_list_phones', $params))
-            ->assertStatus(200)
-            ->assertExactJson($res);
+        $this->assertResponse($expectedResponse, $params);
+    }
+
+    public function testFetchingNumbersWithInvalidCountryCodeParam()
+    {
+        $countryCode = "xxxx";
+        $params = [
+            'phone_country_code' => $countryCode
+        ];
+        $expectedResponse = $this->getPhonesResponse($params);
+        $params = http_build_query($params);
+        $this->assertResponse($expectedResponse, $params);
     }
 
     public function testFetchingNumbersWithNumberStateParam()
@@ -54,11 +59,9 @@ class CustomerPhoneNumbersTest extends TestCase
         $params = [
             'state' => $stateOK
         ];
-        $res = $this->getPhonesResponse($params);
+        $expectedResponse = $this->getPhonesResponse($params);
         $params = http_build_query($params);
-        $this->get(route('ajax_list_phones', $params))
-            ->assertStatus(200)
-            ->assertExactJson($res);
+        $this->assertResponse($expectedResponse, $params);
     }
 
     public function testFetchingNumbersWithAllParams()
@@ -69,11 +72,9 @@ class CustomerPhoneNumbersTest extends TestCase
             'phone_country_code' => $countryCode,
             'state' => $stateNOK
         ];
-        $res = $this->getPhonesResponse($params);
+        $expectedResponse = $this->getPhonesResponse($params);
         $params = http_build_query($params);
-        $this->get(route('ajax_list_phones', $params))
-            ->assertStatus(200)
-            ->assertExactJson($res);
+        $this->assertResponse($expectedResponse, $params);
     }
 
     /**
@@ -90,5 +91,16 @@ class CustomerPhoneNumbersTest extends TestCase
             ])->render(),
             'last_page' => $phones->lastPage(),
         ];
+    }
+
+    /**
+     * @param $res
+     * @param $params
+     */
+    private function assertResponse($res, $params = '')
+    {
+        $this->get(route('ajax_list_phones', $params))
+            ->assertStatus(200)
+            ->assertExactJson($res);
     }
 }

@@ -4,7 +4,6 @@ namespace App\Models\Views;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
 
 class CustomerPhoneView extends Model
 {
