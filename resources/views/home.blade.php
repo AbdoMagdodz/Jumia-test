@@ -74,11 +74,7 @@
     let lastPage = currentPage;
     let query = '';
 
-    $('#select-country').change(function () {
-        $('#filter-phones-form').submit();
-    });
-
-    $('#select-valid-phones').change(function () {
+    $('#select-country, #select-valid-phones').change(function () {
         $('#filter-phones-form').submit();
     });
 
@@ -107,8 +103,6 @@
         $.get(`{{route('ajax_list_phones')}}?page=${currentPage}&${query}`, res => {
             lastPage = res.last_page;
             $('#phone-number-table').html(res.body);
-            console.log({currentPage});
-            console.log({lastPage});
         });
     }
 
